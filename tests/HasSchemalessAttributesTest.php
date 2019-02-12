@@ -88,6 +88,32 @@ class HasSchemalessAttributesTest extends TestCase
     }
 
     /** @test */
+    public function it_can_get_values_using_wildcards_notation()
+    {
+        $this->testModel->schemaless_attributes->rey = ['sides' => [
+            ['name' => 'light'],
+            ['name' => 'neutral'],
+            ['name' => 'dark'],
+        ]];
+
+        $this->assertEquals(['light', 'neutral', 'dark'], $this->testModel->schemaless_attributes->get('rey.sides.*.name'));
+    }
+
+    /** @test */
+    public function it_can_set_values_using_wildcard_notation()
+    {
+        $this->testModel->schemaless_attributes->rey = ['sides' => [
+            ['name' => 'light'],
+            ['name' => 'neutral'],
+            ['name' => 'dark'],
+        ]];
+
+        $this->testModel->schemaless_attributes->set('rey.sides.*.name', 'dark');
+
+        $this->assertEquals(['dark', 'dark', 'dark'], $this->testModel->schemaless_attributes->get('rey.sides.*.name'));
+    }
+
+    /** @test */
     public function it_can_set_all_schemaless_attributes_at_once()
     {
         $array = [
@@ -250,6 +276,56 @@ class HasSchemalessAttributesTest extends TestCase
             'name' => 'value',
             'name2' => 'value2',
         ], $this->testModel->schemaless_attributes->all());
+    }
+
+    /** @test */
+    public function it_returns_an_array_that_can_be_looped()
+    {
+        $this->testModel->schemaless_attributes->name = 'value';
+        $this->testModel->schemaless_attributes->name2 = 'value2';
+
+        $attributes = $this->testModel->schemaless_attributes->all();
+
+        $this->assertCount(2, $attributes);
+
+        foreach ($attributes as $key => $value) {
+            $this->assertNotNull($key);
+            $this->assertNotNull($value);
+        }
+    }
+
+    /** @test */
+    public function it_can_multiple_attributes_at_once_by_passing_an_array_argument()
+    {
+        $this->testModel->schemaless_attributes->set([
+            'foo' => 'bar',
+            'baz' => 'buzz',
+            'arr' => [
+                'subKey1' => 'subVal1',
+                'subKey2' => 'subVal2',
+            ],
+        ]);
+
+        $this->assertEquals('bar', $this->testModel->schemaless_attributes->foo);
+        $this->assertCount(2, $this->testModel->schemaless_attributes->arr);
+        $this->assertEquals('subVal1', $this->testModel->schemaless_attributes->arr['subKey1']);
+    }
+
+    /** @test */
+    public function if_an_iterable_is_passed_to_set_it_will_defer_to_setMany()
+    {
+        $this->testModel->schemaless_attributes->set([
+            'foo' => 'bar',
+            'baz' => 'buzz',
+            'arr' => [
+                'subKey1' => 'subVal1',
+                'subKey2' => 'subVal2',
+            ],
+        ]);
+
+        $this->assertEquals('bar', $this->testModel->schemaless_attributes->foo);
+        $this->assertCount(2, $this->testModel->schemaless_attributes->arr);
+        $this->assertEquals('subVal1', $this->testModel->schemaless_attributes->arr['subKey1']);
     }
 
     protected function assertContainsModels(array $expectedModels, Collection $actualModels)

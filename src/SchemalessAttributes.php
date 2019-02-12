@@ -4,6 +4,7 @@ namespace Spatie\SchemalessAttributes;
 
 use Countable;
 use ArrayAccess;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Arrayable;
@@ -40,7 +41,7 @@ class SchemalessAttributes implements ArrayAccess, Countable, Arrayable
 
     public function get(string $name, $default = null)
     {
-        return array_get($this->schemalessAttributes, $name, $default);
+        return data_get($this->schemalessAttributes, $name, $default);
     }
 
     public function __set(string $name, $value)
@@ -48,21 +49,29 @@ class SchemalessAttributes implements ArrayAccess, Countable, Arrayable
         $this->set($name, $value);
     }
 
-    public function set(string $name, $value)
+    public function set($attribute, $value = null)
     {
-        array_set($this->schemalessAttributes, $name, $value);
+        if (is_iterable($attribute)) {
+            foreach ($attribute as $attribute => $value) {
+                $this->set($attribute, $value);
+            }
+
+            return;
+        }
+
+        data_set($this->schemalessAttributes, $attribute, $value);
 
         $this->model->{$this->sourceAttributeName} = $this->schemalessAttributes;
     }
 
     public function has(string $name): bool
     {
-        return array_has($this->schemalessAttributes, $name);
+        return Arr::has($this->schemalessAttributes, $name);
     }
 
     public function forget(string $name): self
     {
-        $this->model->{$this->sourceAttributeName} = array_except($this->schemalessAttributes, $name);
+        $this->model->{$this->sourceAttributeName} = Arr::except($this->schemalessAttributes, $name);
 
         return $this;
     }

@@ -25,6 +25,12 @@ $yourModel->extra_attributes = [
    'snoke' => ['side' => 'dark']
 ];
 
+// setting/updating multiple values in one go via set()
+$yourModel->extra_attributes->set([
+   'han' => ['side' => 'light'],
+   'snoke' => ['side' => 'dark']
+]);
+
 // retrieving values using dot notation
 $yourModel->extra_attributes->get('rey.side'); // returns 'light'
 
@@ -173,7 +179,7 @@ Here's how you can use the provided scope.
 
 ```php
 // Returns all models that have all the given schemaless attributes
-$yourModel->withExtraAttributes(['name' => 'value', 'name2' => 'value2])->get();
+$yourModel->withExtraAttributes(['name' => 'value', 'name2' => 'value2'])->get();
 ```
 
 If you only want to search on a single custom attribute, you can use the scope like this
@@ -185,7 +191,7 @@ $yourModel->withExtraAttributes('name', 'value')->get();
 
 ## Testing
 
-First create a MySQL database named `laravel_extra_attributes`. After that you can run the tests with:
+First create a MySQL database named `laravel_schemaless_attributes`. After that you can run the tests with:
 
 ``` bash
 composer test
