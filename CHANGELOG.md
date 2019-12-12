@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-schemaless-attributes` will be documented in this file
 
+## 1.6.0 - 2019-09-04
+
+- Add Laravel 6 support
+
+## 1.5.0 - 2019-08-21
+
+- extend `Collection`
+
+## 1.4.0 - 2019-02-27
+
+- drop support for PHP 7.1
+
 ## 1.3.1 - 2019-02-01
 
 - use Arr:: and Str:: functions
